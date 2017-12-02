@@ -4,10 +4,24 @@ using UnityEngine;
 
 public class Player : Dieble {
 
-    public float shiftPower;
+    public Vector2 shiftPower;
+    public float massEffect;
 
     private bool isAlive;
     private Rigidbody2D rb;
+    private float summaryMass = 1;
+
+    public void AddMass(float mass)
+    {
+        Debug.Log("Add mass: " + summaryMass);
+        summaryMass += mass;
+    }
+
+    public void RemoveMass(float mass)
+    {
+        Debug.Log("Remove mass: " + summaryMass);
+        summaryMass = Mathf.Clamp(summaryMass - mass, 1, Mathf.Infinity);
+    }
 
     public bool IsAlive()
     {
@@ -29,7 +43,10 @@ public class Player : Dieble {
 
     public void SetVelocity(Vector2 direction)
     {
-        rb.velocity = direction * shiftPower;
+        //float effect = summaryMass *
+        if (direction.x != 0 || direction.y != 0)
+            direction *= Mathf.Sqrt(2) / 2;
+        rb.velocity = new Vector3(direction.x * shiftPower.x, direction.y * shiftPower.y) * (1 / summaryMass);
     }
 
     protected void OnTriggerEnter2D(Collider2D collision)

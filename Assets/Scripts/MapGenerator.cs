@@ -32,9 +32,20 @@ public class MapGenerator : MonoBehaviour {
         public Sprite background = null;
     }
 
-
-
     private List<Zone> zoneList;
+    private Vector2 zoneSize;
+
+    private bool previousRowHasObstacle = false;
+    private int filledRowRest = 0;
+
+    private void Start()
+    {
+        zoneSize = zonePrefab.GetComponent<BoxCollider2D>().size;
+
+        GenerateNextZone();
+        GenerateNextZone();
+        GenerateNextZone();
+    }
 
     public void GenerateNextZone()
     {
@@ -75,7 +86,51 @@ public class MapGenerator : MonoBehaviour {
         Zone zoneInstance = Instantiate(nextZone, previousZonePosition + new Vector2(0, zonesDistance), Quaternion.identity);
         zoneInstance.transform.parent = zonesContainer.transform;
         zoneList.Add(zoneInstance);
-        zoneInstance.SetZoneProperties(GenerateProperties());
+        ZoneProperties zoneProperties = GenerateProperties();
+        zoneInstance.SetBackground(zoneProperties.background);
+        GenerateObstacles(zoneInstance.transform, zoneProperties);
+    }
+
+    public void GenerateObstacles(Transform zoneTransform, ZoneProperties zoneProperties)
+    {
+        
+        Vector2 zoneRightDownPoint = (Vector2) zoneTransform.position - zoneSize / 2;
+        int rowInd = previousRowHasObstacle ? filledRowRest : 0;
+        previousRowHasObstacle = false;
+        for (; rowInd < zoneProperties.rowCount;
+            rowInd += previousRowHasObstacle ? zoneProperties.filledRowDistance : 1)
+        {
+            // Change when skip
+            previousRowHasObstacle = !previousRowHasObstacle;
+
+            if (!CommonHandler.IsRandomSaysTrue(zoneProperties.obstacleRowProbability)) continue;
+            else previousRowHasObstacle = true;
+            bool obstacleHasExit = false;
+
+            for (int columnInd = 0; columnInd < zoneProperties.columnCount; columnInd++)
+            {
+                if ((columnInd < zoneProperties.columnCount - 1 || obstacleHasExit)
+                    && CommonHandler.IsRandomSaysTrue(zoneProperties.obstacleProbability))
+                {
+                    Obstacle obstacle = Instantiate(zoneProperties.obstacle, zoneTransform);
+                    obstacle.transform.position =
+                        new Vector2(zoneRightDownPoint.x + columnInd * zoneProperties.obstacleSize.x + zoneProperties.obstacleSize.x / 2,
+                       zoneRightDownPoint.y + rowInd * zoneProperties.obstacleSize.y + zoneProperties.obstacleSize.y / 2);
+                }
+                else
+                {
+                    obstacleHasExit = true;
+                }
+            }
+        }
+        if (previousRowHasObstacle && rowInd >= zoneProperties.rowCount)
+        {
+            filledRowRest = rowInd - zoneProperties.rowCount;
+        }
+        else
+        {
+            filledRowRest = 0;
+        }
     }
 
     private ZoneProperties GenerateProperties()

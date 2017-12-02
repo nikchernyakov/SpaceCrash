@@ -7,11 +7,17 @@ public class GameManager : MonoBehaviour {
 
     public Player player;
     public float playerSpeed;
+
     public MapGenerator mapGenerator;
     public EnemyGenerator enemyGenerator;
+    public UIManager uiManager;
+
     public GameObject gameCamera;
     public float cameraSpeed;
+    public float scoreEarnTime;
 
+    private int score;
+    private float scoreCoolDown = 0;
     private Vector2 zoneSize;
     private Vector2 zoneCenter;
 
@@ -23,9 +29,6 @@ public class GameManager : MonoBehaviour {
         enemyGenerator.SetCamera(camera);
         enemyGenerator.SetCameraRadius(Vector3.Distance(camera.transform.position,
             camera.ScreenToWorldPoint(new Vector2(camera.pixelWidth, camera.pixelHeight))));
-
-        mapGenerator.GenerateNextZone();
-        mapGenerator.GenerateNextZone();
 
         zoneSize = mapGenerator.zonePrefab.GetComponent<BoxCollider2D>().size;
         zoneCenter = mapGenerator.zonePrefab.transform.position;
@@ -40,12 +43,12 @@ public class GameManager : MonoBehaviour {
         if (player.IsAlive())
             CheckTap();
 
-        enemyGenerator.GenerateEnemy();
-
         CheckOtherActions();
 
         MoveCamera();
         MovePlayer();
+
+        CheckScore();
     }
 
     void CheckTap()
@@ -67,6 +70,18 @@ public class GameManager : MonoBehaviour {
         {
             Application.Quit();
         }
+    }
+
+    void CheckScore()
+    {
+        if(scoreCoolDown <= 0)
+        {
+            score++;
+            uiManager.ChangeScore(score);
+            scoreCoolDown = scoreEarnTime;
+        }
+
+        scoreCoolDown -= Time.deltaTime;
     }
 
     // Move camera up with cameraSpeed

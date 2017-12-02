@@ -6,13 +6,15 @@ public class Enemy : Dieble {
 
     private Vector2 direction;
     private Quaternion rotation;
-    public Transform positionTransform;
+    public float preemptionLength;
 
     private bool isMove = true;
     public float deadBottom;
 
     public float speed;
     public float mass;
+
+    private Player player;
 
     public void SetDeadBottom(float bottom)
     {
@@ -21,10 +23,11 @@ public class Enemy : Dieble {
 
 	// Use this for initialization
 	void Start () {
-        Player player = FindObjectOfType<Player>();
-        direction = player.transform.position - transform.position;
+        player = FindObjectOfType<Player>();
+        direction = (new Vector3(0, preemptionLength) + player.transform.position) - transform.position;
         direction.Normalize();
-        transform.rotation = Quaternion.FromToRotation(transform.position, player.transform.position - transform.position);
+        transform.rotation = Quaternion.FromToRotation(transform.position,
+            (new Vector3(0, preemptionLength) + player.transform.position) - transform.position);
 	}
 	
 	// Update is called once per frame
@@ -50,13 +53,21 @@ public class Enemy : Dieble {
         transform.parent = collider.transform;
     }
 
+    protected override void Die()
+    {
+        if(!isMove)
+            player.RemoveMass(mass);
+        base.Die();
+    }
+
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Player)))
+        if (isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Player)))
         {
             ConnectTo(collider);
+            player.AddMass(mass);
         }
-        else if(collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
+        else if(isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
         {
             ConnectTo(collider);
         }

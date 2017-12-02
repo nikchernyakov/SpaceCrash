@@ -11,9 +11,11 @@ public class EnemyGenerator : MonoBehaviour {
     public float enemyGenerateReserve = 2f;
     [Range(0, 90)]
     public float generatePointAngle = 0;
+    public float generateCooldown = 0;
+
+    private float currentGenerateCooldown = 0;
 
     private Camera camera;
-
     private float cameraRadius;
     private float cameraBottom;
 
@@ -42,7 +44,13 @@ public class EnemyGenerator : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        
+        if(currentGenerateCooldown <= 0)
+        {
+            currentGenerateCooldown = generateCooldown;
+            GenerateEnemy();
+        }
+
+        currentGenerateCooldown -= Time.deltaTime;
 	}
 
     public void GenerateEnemy()
@@ -62,6 +70,5 @@ public class EnemyGenerator : MonoBehaviour {
         Instantiate(enemy, enemyContainer.transform);
         enemy.transform.position = enemyPosition;
         enemy.SetDeadBottom(GetCameraBottom());
-        Debug.Log(GetCameraBottom());
     }
 }
