@@ -4,78 +4,46 @@ using UnityEngine;
 
 public class Player : Dieble {
 
-    public float jumpPowerX;
-    public float jumpPowerY;
-    public int energyAmount;
-
-    public PowerLevel power;
+    public float shiftPower;
 
     private bool isAlive;
     private Rigidbody2D rb;
-    private int currentEnergyAmount;
 
     public bool IsAlive()
     {
         return isAlive;
     }
 
-    public bool HasEnergy()
-    {
-        return currentEnergyAmount > 0;
-    }
-
     void Start () {
         rb = GetComponent<Rigidbody2D>();
-        rb.velocity = new Vector2(2, 1.5f);
+        //rb.velocity = new Vector2(2, 1.5f);
 
         isAlive = true;
-        currentEnergyAmount = energyAmount;
         
     }
 
     void Update () {
-        // Rotate transform by speed vector
-        transform.rotation = Quaternion.FromToRotation(transform.position, rb.velocity);
+       
 
 	}
 
-    public void Jump()
+    public void SetVelocity(Vector2 direction)
     {
-        rb.velocity += new Vector2(jumpPowerX, jumpPowerY);
-        currentEnergyAmount--;
+        rb.velocity = direction * shiftPower;
     }
 
-
-    public void Clash(Obstacle obstacle)
+    protected void OnTriggerEnter2D(Collider2D collision)
     {
-        if (CheckClash(obstacle))
-        {
-            obstacle.ReceiveKill();
-        }
-        else
+        if (collision.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Obstacle)))
         {
             Die();
         }
     }
 
-    public bool CheckClash(Obstacle obstacle)
-    {
-        return power >= obstacle.hp;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Obstacle)))
-        {
-            Obstacle obstacle = collision.gameObject.GetComponent<Obstacle>();
-            if(obstacle != null)
-                Clash(obstacle);
-        }
-    }
-
     protected override void Die()
     {
-        rb.simulated = false;
-        isAlive = false;
+        /*rb.simulated = false;
+        isAlive = false;*/
+        FindObjectOfType<GameManager>().GameOver();
     }
 }

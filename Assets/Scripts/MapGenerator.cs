@@ -10,6 +10,29 @@ public class MapGenerator : MonoBehaviour {
     public Zone zonePrefab;
     public Zone startZone;
     public int zoneOnSceneCount;
+    public ZoneProperties zoneProperties;
+
+    [System.Serializable]
+    public class ZoneProperties : System.Object
+    {
+        public int rowCount;
+        //public int rowSize;
+        public int columnCount;
+        //public int columnSize;
+
+        public int filledRowDistance;
+        [Range(0, 1)]
+        public float obstacleRowProbability;
+        [Range(0, 1)]
+        public float obstacleProbability;
+
+        public Vector2 obstacleSize;
+        public Obstacle obstacle;
+
+        public Sprite background = null;
+    }
+
+
 
     private List<Zone> zoneList;
 
@@ -49,7 +72,7 @@ public class MapGenerator : MonoBehaviour {
 
     private void InstantiateNextZone(Zone nextZone, Vector2 previousZonePosition)
     {
-        Zone zoneInstance = Instantiate(nextZone, previousZonePosition + new Vector2(zonesDistance, 0), Quaternion.identity);
+        Zone zoneInstance = Instantiate(nextZone, previousZonePosition + new Vector2(0, zonesDistance), Quaternion.identity);
         zoneInstance.transform.parent = zonesContainer.transform;
         zoneList.Add(zoneInstance);
         zoneInstance.SetZoneProperties(GenerateProperties());
@@ -57,7 +80,7 @@ public class MapGenerator : MonoBehaviour {
 
     private ZoneProperties GenerateProperties()
     {
-        ZoneProperties zoneProperties = new ZoneProperties();
+        ZoneProperties zoneProperties = this.zoneProperties;
         zoneProperties.background = backgrounds[Random.Range(0, backgrounds.Count - 1)];
         
         return zoneProperties;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-public enum TagEnum { Missile, Obstacle, Zone}
+public enum TagEnum { Player, MainCamera, Obstacle, Zone, Enemy}
 
 public class TagManager
 {

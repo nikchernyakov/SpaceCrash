@@ -6,46 +6,54 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour {
 
     public Player player;
-    public float tapCooldown;
-    private float currentTapCooldown;
-
+    public float playerSpeed;
     public MapGenerator mapGenerator;
-
+    public EnemyGenerator enemyGenerator;
     public GameObject gameCamera;
+    public float cameraSpeed;
+
+    private Vector2 zoneSize;
+    private Vector2 zoneCenter;
+
+    private Camera camera;
 
     void Start () {
-        currentTapCooldown = 0;
+        camera = gameCamera.GetComponent<Camera>();
+
+        enemyGenerator.SetCamera(camera);
+        enemyGenerator.SetCameraRadius(Vector3.Distance(camera.transform.position,
+            camera.ScreenToWorldPoint(new Vector2(camera.pixelWidth, camera.pixelHeight))));
 
         mapGenerator.GenerateNextZone();
         mapGenerator.GenerateNextZone();
-        mapGenerator.GenerateNextZone();
+
+        zoneSize = mapGenerator.zonePrefab.GetComponent<BoxCollider2D>().size;
+        zoneCenter = mapGenerator.zonePrefab.transform.position;
     }
 	
 	void Update () {
-        if (player.IsAlive() && IsPlayerInCamera())
+        if (!IsPlayerInCamera())
+        {
+            GameOver();
+        }
+
+        if (player.IsAlive())
             CheckTap();
+
+        enemyGenerator.GenerateEnemy();
 
         CheckOtherActions();
 
-        // Decrease current tap cooldown
-        if (currentTapCooldown > 0)
-        {
-            currentTapCooldown -= Time.deltaTime;
-        }
-
         MoveCamera();
+        MovePlayer();
     }
 
     void CheckTap()
     {
-        if (player.HasEnergy() && currentTapCooldown <= 0)
-        {
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                player.Jump();
-                currentTapCooldown = tapCooldown;
-            }
-        }
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        player.SetVelocity(new Vector2(horizontal, vertical));
     }
     
     void CheckOtherActions()
@@ -61,20 +69,31 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    // Move camera by player for horizontal
+    // Move camera up with cameraSpeed
     void MoveCamera()
     {
-        gameCamera.transform.position = new Vector3(player.transform.position.x,
-            gameCamera.transform.position.y, gameCamera.transform.position.z);
+        gameCamera.transform.position += Vector3.up * cameraSpeed * Time.deltaTime;
+       
+    }
+
+    // Move camera up with cameraSpeed
+    void MovePlayer()
+    {
+        player.transform.position += Vector3.up * playerSpeed * Time.deltaTime;
+
+        // Check for exit from horizontal bounds
+        Vector2 campPosition = new Vector2(Mathf.Clamp(player.transform.position.x, zoneCenter.x - zoneSize.x / 2, zoneCenter.x + zoneSize.x / 2),
+            player.transform.position.y);
+        player.transform.position = campPosition;
     }
 
     bool IsPlayerInCamera()
     {
-        Camera camera = gameCamera.GetComponent<Camera>();
-        float height = camera.pixelHeight;
-        Vector2 cameraTop = camera.ScreenToWorldPoint(new Vector2(0, height));
+        float pixelHeight = camera.pixelHeight;
+        Vector2 cameraTop = camera.ScreenToWorldPoint(new Vector2(0, pixelHeight));
+        float height = cameraTop.y - gameCamera.transform.position.y;
 
-        if (player.transform.position.y < cameraTop.y)
+        if (player.transform.position.y < cameraTop.y && player.transform.position.y > gameCamera.transform.position.y - height) 
         {
             return true;
         }
@@ -86,8 +105,13 @@ public class GameManager : MonoBehaviour {
     {
         if (collision.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Zone)))
         {
-            Debug.Log("EnterZone");
             mapGenerator.GenerateNextZone();
         }
+    }
+
+    public void GameOver()
+    {
+        //Debug.LogError("Game Over");
+        Time.timeScale = 0;
     }
 }
