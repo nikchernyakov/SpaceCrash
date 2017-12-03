@@ -62,14 +62,14 @@ public class Enemy : Dieble {
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Player)))
+        if (isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
+        {
+            ConnectTo(collider);
+        }
+        else if(isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Player)))
         {
             ConnectTo(collider);
             player.AddMass(mass);
-        }
-        else if(isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
-        {
-            ConnectTo(collider);
         }
         else if(collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Obstacle)))
         {

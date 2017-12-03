@@ -16,6 +16,30 @@ public class GameManager : MonoBehaviour {
     public float cameraSpeed;
     public float scoreEarnTime;
 
+    public int scoresNeedToUpHardLevel = 10;
+    public UpLevelProperties upLevelProperties;
+    
+    [System.Serializable]
+    public class UpLevelProperties
+    {
+        public float playerShiftYDelta;
+
+        // GameManager
+        public float cameraSpeedDelta;
+        public float scoreEarnTimeDelta;
+        public float scoresNeedToUpHardLevelDelta;
+        // EnemyGenerator
+        public float enemyPropabilityDelta;
+        public float enemyGenerateCooldownDelta;
+        // Enemy
+        public float enemySpeedDelta;
+        public float enemyMassDelta;
+        // MapGenerator
+        public float obstacleRowProbabilityDelta;
+        public float obstacleProbabilityDelta;
+
+    }
+
     private int score;
     private float scoreCoolDown = 0;
     private Vector2 zoneSize;
@@ -23,7 +47,12 @@ public class GameManager : MonoBehaviour {
 
     private Camera camera;
 
+    private bool isGameOver = false;
+
     void Start () {
+        Time.timeScale = 1;
+        isGameOver = false;
+
         camera = gameCamera.GetComponent<Camera>();
 
         enemyGenerator.SetCamera(camera);
@@ -35,13 +64,13 @@ public class GameManager : MonoBehaviour {
     }
 	
 	void Update () {
+        if (isGameOver)
+            return;
+
         if (!IsPlayerInCamera())
         {
             GameOver();
         }
-
-        if (player.IsAlive())
-            CheckTap();
 
         CheckOtherActions();
 
@@ -51,17 +80,21 @@ public class GameManager : MonoBehaviour {
         CheckScore();
     }
 
-    void CheckTap()
+    bool CheckTap()
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
-        player.SetVelocity(new Vector2(horizontal, vertical));
+        Vector2 velocity = new Vector2(horizontal, vertical);
+
+        player.SetVelocity(velocity);
+
+        return velocity.Equals(Vector2.zero);
     }
     
     void CheckOtherActions()
     {
-        if (Input.GetKey(KeyCode.R) || (!player.IsAlive() && Input.GetKey(KeyCode.Mouse0)))
+        if (Input.GetKey(KeyCode.R))
         {
             SceneManager.LoadScene("Main");
         }
@@ -82,6 +115,31 @@ public class GameManager : MonoBehaviour {
         }
 
         scoreCoolDown -= Time.deltaTime;
+
+        if(score % scoresNeedToUpHardLevel == 0)
+        {
+            UpHardLevel();
+        }
+    }
+
+    public void UpHardLevel()
+    {
+        Debug.Log("Up level");
+
+        player.shiftPower.y += upLevelProperties.playerShiftYDelta;
+
+        cameraSpeed += upLevelProperties.cameraSpeedDelta;
+        scoreEarnTime -= upLevelProperties.scoreEarnTimeDelta;
+        scoresNeedToUpHardLevel = (int) (scoresNeedToUpHardLevel * upLevelProperties.scoresNeedToUpHardLevelDelta);
+
+        enemyGenerator.enemyProbability += upLevelProperties.enemyPropabilityDelta;
+        enemyGenerator.generateCooldown -= upLevelProperties.enemyGenerateCooldownDelta;
+
+        enemyGenerator.enemySpeedProperties += upLevelProperties.enemySpeedDelta;
+        enemyGenerator.enemyMassProperties += upLevelProperties.enemyMassDelta;
+
+        mapGenerator.zoneProperties.obstacleProbability += upLevelProperties.obstacleProbabilityDelta;
+        mapGenerator.zoneProperties.obstacleRowProbability += upLevelProperties.obstacleRowProbabilityDelta;
     }
 
     // Move camera up with cameraSpeed
@@ -94,7 +152,9 @@ public class GameManager : MonoBehaviour {
     // Move camera up with cameraSpeed
     void MovePlayer()
     {
-        player.transform.position += Vector3.up * playerSpeed * Time.deltaTime;
+        CheckTap();
+
+        player.transform.position += Vector3.up * playerSpeed * Time.deltaTime; 
 
         // Check for exit from horizontal bounds
         Vector2 campPosition = new Vector2(Mathf.Clamp(player.transform.position.x, zoneCenter.x - zoneSize.x / 2, zoneCenter.x + zoneSize.x / 2),
@@ -128,5 +188,6 @@ public class GameManager : MonoBehaviour {
     {
         //Debug.LogError("Game Over");
         Time.timeScale = 0;
+        isGameOver = true;
     }
 }

@@ -149,6 +149,18 @@ MonoBehaviour:
   gameCamera: {fileID: 1725313486}
   cameraSpeed: 2
   scoreEarnTime: 3
+  scoresNeedToUpHardLevel: 5
+  upLevelProperties:
+    playerShiftYDelta: 0.2
+    cameraSpeedDelta: 0.4
+    scoreEarnTimeDelta: 0.2
+    scoresNeedToUpHardLevelDelta: 1.5
+    enemyPropabilityDelta: 0.05
+    enemyGenerateCooldownDelta: 0.02
+    enemySpeedDelta: 0.08
+    enemyMassDelta: 0.03
+    obstacleRowProbabilityDelta: 0.01
+    obstacleProbabilityDelta: 0.01
 --- !u!4 &95968727
 Transform:
   m_ObjectHideFlags: 0
@@ -237,7 +249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaf2caa2e88736d4685632a1952f3b35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shiftPower: {x: 4, y: 3}
+  shiftPower: {x: 4.3, y: 3}
   massEffect: 0
 --- !u!4 &238259472
 Transform:
@@ -721,7 +733,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 963992839}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -345, y: 139, z: 0}
+  m_LocalPosition: {x: -334, y: 162, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1725220582}
@@ -729,7 +741,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -345, y: 139}
+  m_AnchoredPosition: {x: -334, y: 162}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &963992841
@@ -863,8 +875,8 @@ Canvas:
   m_GameObject: {fileID: 1725220578}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1725313489}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -882,8 +894,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1725220578}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 460.5, y: 202, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 0.024752475, y: 0.024752475, z: 0.024752475}
   m_Children:
   - {fileID: 963992840}
   m_Father: {fileID: 0}
@@ -892,7 +904,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 300, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1725313486
 GameObject:

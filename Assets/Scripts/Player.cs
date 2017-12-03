@@ -13,13 +13,13 @@ public class Player : Dieble {
 
     public void AddMass(float mass)
     {
-        Debug.Log("Add mass: " + summaryMass);
+        //Debug.Log("Add mass: " + summaryMass);
         summaryMass += mass;
     }
 
     public void RemoveMass(float mass)
     {
-        Debug.Log("Remove mass: " + summaryMass);
+        //Debug.Log("Remove mass: " + summaryMass);
         summaryMass = Mathf.Clamp(summaryMass - mass, 1, Mathf.Infinity);
     }
 
@@ -30,8 +30,6 @@ public class Player : Dieble {
 
     void Start () {
         rb = GetComponent<Rigidbody2D>();
-        //rb.velocity = new Vector2(2, 1.5f);
-
         isAlive = true;
         
     }
@@ -43,10 +41,22 @@ public class Player : Dieble {
 
     public void SetVelocity(Vector2 direction)
     {
-        //float effect = summaryMass *
+
         if (direction.x != 0 || direction.y != 0)
             direction *= Mathf.Sqrt(2) / 2;
-        rb.velocity = new Vector3(direction.x * shiftPower.x, direction.y * shiftPower.y) * (1 / summaryMass);
+
+        float shiftPowerY = shiftPower.y;
+
+        if(direction.y < 0)
+        {
+            shiftPowerY *= 2;
+        }
+        else
+        {
+            shiftPowerY *= 1.5f;
+        }
+        
+        rb.velocity = new Vector3(direction.x * shiftPower.x, direction.y * shiftPowerY) * (1 / summaryMass);
     }
 
     protected void OnTriggerEnter2D(Collider2D collision)

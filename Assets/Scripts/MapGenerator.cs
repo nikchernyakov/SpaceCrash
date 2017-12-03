@@ -106,10 +106,12 @@ public class MapGenerator : MonoBehaviour {
             if (!CommonHandler.IsRandomSaysTrue(zoneProperties.obstacleRowProbability)) continue;
             else previousRowHasObstacle = true;
             bool obstacleHasExit = false;
+            //Debug.Log(Random.Range(0, zoneProperties.columnCount));
+            int randomEmptyColumnInd = Random.Range(0, zoneProperties.columnCount);
 
             for (int columnInd = 0; columnInd < zoneProperties.columnCount; columnInd++)
             {
-                if ((columnInd < zoneProperties.columnCount - 1 || obstacleHasExit)
+                if (columnInd != randomEmptyColumnInd
                     && CommonHandler.IsRandomSaysTrue(zoneProperties.obstacleProbability))
                 {
                     Obstacle obstacle = Instantiate(zoneProperties.obstacle, zoneTransform);

@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemyGenerator : MonoBehaviour {
 
     public Enemy enemy;
+    public float enemySpeedProperties;
+    public float enemyMassProperties;
     [Range(0, 1)]
     public float enemyProbability;
     public GameObject enemyContainer;
@@ -67,8 +69,11 @@ public class EnemyGenerator : MonoBehaviour {
 
         enemyPosition += (Vector2) camera.transform.position;
 
-        Instantiate(enemy, enemyContainer.transform);
-        enemy.transform.position = enemyPosition;
-        enemy.SetDeadBottom(GetCameraBottom());
+        Enemy enemyInstance = Instantiate(enemy, enemyContainer.transform);
+        enemyInstance.transform.position = enemyPosition;
+        enemyInstance.SetDeadBottom(GetCameraBottom());
+        enemyInstance.speed += enemySpeedProperties;
+        enemyInstance.mass += enemyMassProperties;
+
     }
 }
