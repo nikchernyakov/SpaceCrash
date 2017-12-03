@@ -75,7 +75,7 @@ public class GameManager : MonoBehaviour {
         if (isGameOver)
             return;
 
-        if (!IsPlayerInCamera())
+        if (!CommonHandler.IsObjectInCamera(cameraObject, gameCamera.transform, player.transform.position))
         {
             GameOver();
         }
@@ -193,20 +193,6 @@ public class GameManager : MonoBehaviour {
         Vector2 campPosition = new Vector2(Mathf.Clamp(player.transform.position.x, zoneCenter.x - zoneSize.x / 2, zoneCenter.x + zoneSize.x / 2),
             player.transform.position.y);
         player.transform.position = campPosition;
-    }
-
-    bool IsPlayerInCamera()
-    {
-        float pixelHeight = cameraObject.pixelHeight;
-        Vector2 cameraTop = cameraObject.ScreenToWorldPoint(new Vector2(0, pixelHeight));
-        float height = cameraTop.y - gameCamera.transform.position.y;
-
-        if (player.transform.position.y < cameraTop.y && player.transform.position.y > gameCamera.transform.position.y - height) 
-        {
-            return true;
-        }
-        else
-            return false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

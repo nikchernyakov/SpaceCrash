@@ -45,7 +45,6 @@ public class MapGenerator : MonoBehaviour {
 
         GenerateNextZone();
         GenerateNextZone();
-        GenerateNextZone();
     }
 
     public void GenerateNextZone()

@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 3ea7279fff45e0440b54a85ae00813d6
+timeCreated: 1512303890
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: TR2N
+  fontNames:
+  - TR2N
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

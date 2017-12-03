@@ -8,6 +8,8 @@ public class Enemy : Dieble {
     private Quaternion rotation;
     public float preemptionLength;
 
+    private Vector2 target;
+
     private bool isMove = true;
     public float deadBottom;
 
@@ -29,7 +31,7 @@ public class Enemy : Dieble {
         rotation = Quaternion.FromToRotation(transform.position,
             (new Vector3(0, preemptionLength) + player.transform.position) - transform.position);
 
-        transform.rotation = rotation;
+        //transform.rotation = rotation;
 	}
 	
 	// Update is called once per frame
