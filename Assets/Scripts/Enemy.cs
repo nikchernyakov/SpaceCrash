@@ -18,6 +18,7 @@ public class Enemy : Dieble {
     public float mass;
 
     private Player player;
+    private GameManager gameManager;
 
     public void SetDeadBottom(float bottom)
     {
@@ -26,6 +27,7 @@ public class Enemy : Dieble {
 
 	// Use this for initialization
 	void Start () {
+        gameManager = FindObjectOfType<GameManager>();
         player = FindObjectOfType<Player>();
         direction = (new Vector3(0, preemptionLength) + player.transform.position) - transform.position;
         direction.Normalize();
@@ -57,6 +59,7 @@ public class Enemy : Dieble {
 
         isMove = false;
         transform.parent = collider.transform;
+        gameManager.soundManager.Bump();
 
     }
 

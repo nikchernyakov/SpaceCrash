@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
     public MapGenerator mapGenerator;
     public EnemyGenerator enemyGenerator;
     public UIManager uiManager;
+    public SoundManager soundManager;
 
     public GameObject gameElementsCanvas;
     public GameObject pauseElementsCanvas;

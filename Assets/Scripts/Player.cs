@@ -78,7 +78,7 @@ public class Player : Dieble {
         }
         else if (collision.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
         {
-
+            
         }
 
 
@@ -88,6 +88,6 @@ public class Player : Dieble {
     {
         /*rb.simulated = false;
         isAlive = false;*/
-        FindObjectOfType<GameManager>().GameOver();
+        gameManager.GameOver();
     }
 }
