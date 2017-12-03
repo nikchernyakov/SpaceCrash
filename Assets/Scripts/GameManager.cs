@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour {
     private Vector2 zoneSize;
     private Vector2 zoneCenter;
 
-    private Camera camera;
+    private Camera cameraObject;
 
     private bool isGameOver = false;
 
@@ -53,17 +53,19 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1;
         isGameOver = false;
 
-        camera = gameCamera.GetComponent<Camera>();
+        cameraObject = gameCamera.GetComponent<Camera>();
 
-        enemyGenerator.SetCamera(camera);
-        enemyGenerator.SetCameraRadius(Vector3.Distance(camera.transform.position,
-            camera.ScreenToWorldPoint(new Vector2(camera.pixelWidth, camera.pixelHeight))));
+        enemyGenerator.SetCamera(cameraObject);
+        enemyGenerator.SetCameraRadius(Vector3.Distance(cameraObject.transform.position,
+            cameraObject.ScreenToWorldPoint(new Vector2(cameraObject.pixelWidth, cameraObject.pixelHeight))));
 
         zoneSize = mapGenerator.zonePrefab.GetComponent<BoxCollider2D>().size;
         zoneCenter = mapGenerator.zonePrefab.transform.position;
     }
 	
 	void Update () {
+        CheckOtherActions();
+
         if (isGameOver)
             return;
 
@@ -72,7 +74,6 @@ public class GameManager : MonoBehaviour {
             GameOver();
         }
 
-        CheckOtherActions();
 
         MoveCamera();
         MovePlayer();
@@ -164,8 +165,8 @@ public class GameManager : MonoBehaviour {
 
     bool IsPlayerInCamera()
     {
-        float pixelHeight = camera.pixelHeight;
-        Vector2 cameraTop = camera.ScreenToWorldPoint(new Vector2(0, pixelHeight));
+        float pixelHeight = cameraObject.pixelHeight;
+        Vector2 cameraTop = cameraObject.ScreenToWorldPoint(new Vector2(0, pixelHeight));
         float height = cameraTop.y - gameCamera.transform.position.y;
 
         if (player.transform.position.y < cameraTop.y && player.transform.position.y > gameCamera.transform.position.y - height) 

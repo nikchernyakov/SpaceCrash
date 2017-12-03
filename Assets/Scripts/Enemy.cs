@@ -26,8 +26,10 @@ public class Enemy : Dieble {
         player = FindObjectOfType<Player>();
         direction = (new Vector3(0, preemptionLength) + player.transform.position) - transform.position;
         direction.Normalize();
-        transform.rotation = Quaternion.FromToRotation(transform.position,
+        rotation = Quaternion.FromToRotation(transform.position,
             (new Vector3(0, preemptionLength) + player.transform.position) - transform.position);
+
+        transform.rotation = rotation;
 	}
 	
 	// Update is called once per frame
@@ -48,26 +50,35 @@ public class Enemy : Dieble {
 
     public void ConnectTo(Collider2D collider)
     {
+       // Vector3 previousScale = transform.localScale;
+
         isMove = false;
-        //positionTransform.parent = collider.transform;
         transform.parent = collider.transform;
+
     }
 
     protected override void Die()
     {
+        transform.parent = null;
+
         if(!isMove)
             player.RemoveMass(mass);
         base.Die();
     }
 
+
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
+        if (isMove && collider.gameObject.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
         {
+            Debug.Log("Enemies crash");
+            if (collider.gameObject.transform.parent != null && collider.gameObject.transform.parent.Equals(transform))
+                return;
             ConnectTo(collider);
         }
         else if(isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Player)))
         {
+            Debug.Log("Player crash");
             ConnectTo(collider);
             player.AddMass(mass);
         }

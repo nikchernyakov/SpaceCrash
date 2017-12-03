@@ -105,8 +105,7 @@ public class MapGenerator : MonoBehaviour {
 
             if (!CommonHandler.IsRandomSaysTrue(zoneProperties.obstacleRowProbability)) continue;
             else previousRowHasObstacle = true;
-            bool obstacleHasExit = false;
-            //Debug.Log(Random.Range(0, zoneProperties.columnCount));
+            
             int randomEmptyColumnInd = Random.Range(0, zoneProperties.columnCount);
 
             for (int columnInd = 0; columnInd < zoneProperties.columnCount; columnInd++)
@@ -118,10 +117,6 @@ public class MapGenerator : MonoBehaviour {
                     obstacle.transform.position =
                         new Vector2(zoneRightDownPoint.x + columnInd * zoneProperties.obstacleSize.x + zoneProperties.obstacleSize.x / 2,
                        zoneRightDownPoint.y + rowInd * zoneProperties.obstacleSize.y + zoneProperties.obstacleSize.y / 2);
-                }
-                else
-                {
-                    obstacleHasExit = true;
                 }
             }
         }

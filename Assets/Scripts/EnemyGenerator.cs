@@ -17,13 +17,13 @@ public class EnemyGenerator : MonoBehaviour {
 
     private float currentGenerateCooldown = 0;
 
-    private Camera camera;
+    private Camera gameCamera;
     private float cameraRadius;
     private float cameraBottom;
 
     public void SetCamera(Camera camera)
     {
-        this.camera = camera;
+        this.gameCamera = camera;
     }
 
     public void SetCameraRadius(float radius)
@@ -33,11 +33,11 @@ public class EnemyGenerator : MonoBehaviour {
 
     public float GetCameraBottom()
     {
-        float pixelHeight = camera.pixelHeight;
-        Vector2 cameraTop = camera.ScreenToWorldPoint(new Vector2(0, pixelHeight));
-        float height = cameraTop.y - camera.transform.position.y;
+        float pixelHeight = gameCamera.pixelHeight;
+        Vector2 cameraTop = gameCamera.ScreenToWorldPoint(new Vector2(0, pixelHeight));
+        float height = cameraTop.y - gameCamera.transform.position.y;
 
-        return camera.transform.position.y - height;
+        return gameCamera.transform.position.y - height;
     }
 
     // Use this for initialization
@@ -67,7 +67,7 @@ public class EnemyGenerator : MonoBehaviour {
         enemyPosition = new Vector2(enemyPosition.x * Mathf.Cos(randomAngle) - enemyPosition.y * Mathf.Sin(randomAngle),
             enemyPosition.x * Mathf.Sin(randomAngle) + enemyPosition.y * Mathf.Cos(randomAngle));
 
-        enemyPosition += (Vector2) camera.transform.position;
+        enemyPosition += (Vector2) gameCamera.transform.position;
 
         Enemy enemyInstance = Instantiate(enemy, enemyContainer.transform);
         enemyInstance.transform.position = enemyPosition;
