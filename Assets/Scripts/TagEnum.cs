@@ -2,6 +2,8 @@
 
 public enum TagEnum { Player, MainCamera, Obstacle, Zone, Enemy}
 
+public enum GameStateEnum { Play, Pause, GameOver}
+
 public class TagManager
 {
 

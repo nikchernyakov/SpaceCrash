@@ -18,6 +18,8 @@ public class MainMenuManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        Time.timeScale = 1;
+
         cameraObject = gameCamera.GetComponent<Camera>();
 
         enemyGenerator.SetCamera(cameraObject);
@@ -47,7 +49,7 @@ public class MainMenuManager : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.Escape))
         {
-            Application.Quit();
+            Exit();
         }
     }
 
@@ -60,6 +62,11 @@ public class MainMenuManager : MonoBehaviour {
     {
         mainMenuCanvas.SetActive(false);
         aboutMenuCanvas.SetActive(true);
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
     }
 
     public void MainMenu()

@@ -22,7 +22,7 @@ public class Player : Dieble {
 
     public void AddMass(float mass)
     {
-        //Debug.Log("Add mass: " + summaryMass);
+        Debug.Log("Add mass: " + mass);
         summaryMass += mass;
     }
 
@@ -76,6 +76,12 @@ public class Player : Dieble {
         {
             Die();
         }
+        else if (collision.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
+        {
+
+        }
+
+
     }
 
     protected override void Die()

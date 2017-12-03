@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour {
     public EnemyGenerator enemyGenerator;
     public UIManager uiManager;
 
+    public GameObject gameElementsCanvas;
+    public GameObject pauseElementsCanvas;
+
     public GameObject gameCamera;
     public float cameraSpeed;
     public float scoreEarnTime;
@@ -53,11 +56,13 @@ public class GameManager : MonoBehaviour {
 
     private Camera cameraObject;
 
-    private bool isGameOver = false;
+    private GameStateEnum gameState;
 
     void Start () {
+
+        ChangeCanvas(true);
         Time.timeScale = 1;
-        isGameOver = false;
+        gameState = GameStateEnum.Play;
 
         cameraObject = gameCamera.GetComponent<Camera>();
 
@@ -72,7 +77,7 @@ public class GameManager : MonoBehaviour {
 	void Update () {
         CheckOtherActions();
 
-        if (isGameOver)
+        if (!gameState.Equals(GameStateEnum.Play))
             return;
 
         if (!CommonHandler.IsObjectInCamera(cameraObject, gameCamera.transform, player.transform.position))
@@ -94,7 +99,7 @@ public class GameManager : MonoBehaviour {
 
         if(scoreComboTimeCooldown <= 0)
         {
-            Debug.Log("End combo");
+            //Debug.Log("End combo");
             scoreCombo = 0;
         }
     }
@@ -108,9 +113,7 @@ public class GameManager : MonoBehaviour {
     public void AddScoreForKill()
     {
         AddCombo();
-        score += (int) (scoreForKill * scoreCombo * scoreComboEffect);
-
-        Debug.Log("Kill score: " + scoreForKill * scoreCombo * scoreComboEffect);
+        AddScore((int) (scoreForKill * scoreCombo * scoreComboEffect));
     }
 
     bool CheckTap()
@@ -127,23 +130,40 @@ public class GameManager : MonoBehaviour {
     
     void CheckOtherActions()
     {
-        if (Input.GetKey(KeyCode.R))
+
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene("Main");
+            Restart();
         }
 
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Application.Quit();
+            if (gameState.Equals(GameStateEnum.Pause))
+            {
+                Play();
+            }
+            else if(gameState.Equals(GameStateEnum.Play))
+            {
+                Pause();
+            }
+            else if (gameState.Equals(GameStateEnum.GameOver))
+            {
+                SceneManager.LoadScene("Menu");
+            }
         }
+    }
+
+    void AddScore(int value)
+    {
+        score += value;
+        uiManager.ChangeScore(score);
     }
 
     void CheckScore()
     {
         if(scoreCoolDown <= 0)
         {
-            score++;
-            uiManager.ChangeScore(score);
+            AddScore(1);
             scoreCoolDown = scoreEarnTime;
         }
 
@@ -155,9 +175,24 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    public void Restart()
+    {
+        SceneManager.LoadScene("Main");
+    }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene("Menu");
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
+    }
+
     public void UpHardLevel()
     {
-        Debug.Log("Up level");
+        //Debug.Log("Up level");
 
         player.shiftPower.y += upLevelProperties.playerShiftYDelta;
 
@@ -203,10 +238,30 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    void Play()
+    {
+        ChangeCanvas(true);
+        Time.timeScale = 1;
+        gameState = GameStateEnum.Play;
+    }
+
+    void Pause()
+    {
+        Time.timeScale = 0;
+        gameState = GameStateEnum.Pause;
+
+        ChangeCanvas(false);
+    }
+
+    public void ChangeCanvas(bool isGame)
+    {
+        gameElementsCanvas.SetActive(isGame);
+        pauseElementsCanvas.SetActive(!isGame);
+    }
+
     public void GameOver()
     {
-        //Debug.LogError("Game Over");
         Time.timeScale = 0;
-        isGameOver = true;
+        gameState = GameStateEnum.GameOver;
     }
 }

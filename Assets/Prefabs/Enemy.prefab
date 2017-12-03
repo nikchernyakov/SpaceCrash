@@ -108,7 +108,7 @@ MonoBehaviour:
   preemptionLength: 7
   deadBottom: 0
   speed: 5
-  mass: 0.2
+  mass: 0.4
 --- !u!212 &212460755956835864
 SpriteRenderer:
   m_ObjectHideFlags: 1
