@@ -11,6 +11,7 @@ public class Enemy : Dieble {
     private Vector2 target;
 
     private bool isMove = true;
+    private bool isConnectedToPlayer = false;
     public float deadBottom;
 
     public float speed;
@@ -31,7 +32,7 @@ public class Enemy : Dieble {
         rotation = Quaternion.FromToRotation(transform.position,
             (new Vector3(0, preemptionLength) + player.transform.position) - transform.position);
 
-        //transform.rotation = rotation;
+        transform.rotation = rotation;
 	}
 	
 	// Update is called once per frame
@@ -63,7 +64,7 @@ public class Enemy : Dieble {
     {
         transform.parent = null;
 
-        if(!isMove)
+        if(isConnectedToPlayer)
             player.KillEnemy(this);
         base.Die();
     }
@@ -76,12 +77,31 @@ public class Enemy : Dieble {
             //Debug.Log("Enemies crash");
             if (collider.gameObject.transform.parent != null && collider.gameObject.transform.parent.Equals(transform))
                 return;
+
+            if (collider.gameObject.GetComponent<Enemy>().isConnectedToPlayer)
+            {
+                player.AddMass(mass);
+                isConnectedToPlayer = true;
+            }
+            else
+            {
+                Die();
+            }
+
             ConnectTo(collider);
         }
         else if(isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Player)))
         {
             //Debug.Log("Player crash");
-            ConnectTo(collider); 
+            ConnectTo(collider);
+            isConnectedToPlayer = true;
+
+            foreach(Enemy children in GetComponentsInChildren<Enemy>())
+            {
+                player.AddMass(children.mass);
+                children.isConnectedToPlayer = true;
+            } 
+            //player.AddMass(mass);
         }
         else if(collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Obstacle)))
         {
