@@ -15,6 +15,12 @@ public class GameManager : MonoBehaviour {
     public GameObject gameCamera;
     public float cameraSpeed;
     public float scoreEarnTime;
+    public int scoreForKill = 0;
+    public int scoreCombo;
+    public float scoreComboEffect = 1.5f;
+    public float scoreComboTime;
+
+    private float scoreComboTimeCooldown;
 
     public int scoresNeedToUpHardLevel = 10;
     public UpLevelProperties upLevelProperties;
@@ -74,11 +80,37 @@ public class GameManager : MonoBehaviour {
             GameOver();
         }
 
+        UpdateCombo();
 
         MoveCamera();
         MovePlayer();
 
         CheckScore();
+    }
+
+    public void UpdateCombo()
+    {
+        scoreComboTimeCooldown -= Time.deltaTime;
+
+        if(scoreComboTimeCooldown <= 0)
+        {
+            Debug.Log("End combo");
+            scoreCombo = 0;
+        }
+    }
+
+    public void AddCombo()
+    {
+        scoreComboTimeCooldown = scoreComboTime;
+        scoreCombo++;
+    }
+
+    public void AddScoreForKill()
+    {
+        AddCombo();
+        score += (int) (scoreForKill * scoreCombo * scoreComboEffect);
+
+        Debug.Log("Kill score: " + scoreForKill * scoreCombo * scoreComboEffect);
     }
 
     bool CheckTap()

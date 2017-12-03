@@ -11,6 +11,15 @@ public class Player : Dieble {
     private Rigidbody2D rb;
     private float summaryMass = 1;
 
+    private GameManager gameManager;
+
+    public void KillEnemy(Enemy enemy)
+    {
+        RemoveMass(enemy.mass);
+
+        gameManager.AddScoreForKill();
+    }
+
     public void AddMass(float mass)
     {
         //Debug.Log("Add mass: " + summaryMass);
@@ -31,6 +40,8 @@ public class Player : Dieble {
     void Start () {
         rb = GetComponent<Rigidbody2D>();
         isAlive = true;
+
+        gameManager = FindObjectOfType<GameManager>();
         
     }
 

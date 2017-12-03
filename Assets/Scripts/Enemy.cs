@@ -62,7 +62,7 @@ public class Enemy : Dieble {
         transform.parent = null;
 
         if(!isMove)
-            player.RemoveMass(mass);
+            player.KillEnemy(this);
         base.Die();
     }
 
@@ -71,16 +71,15 @@ public class Enemy : Dieble {
     {
         if (isMove && collider.gameObject.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Enemy)))
         {
-            Debug.Log("Enemies crash");
+            //Debug.Log("Enemies crash");
             if (collider.gameObject.transform.parent != null && collider.gameObject.transform.parent.Equals(transform))
                 return;
             ConnectTo(collider);
         }
         else if(isMove && collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Player)))
         {
-            Debug.Log("Player crash");
-            ConnectTo(collider);
-            player.AddMass(mass);
+            //Debug.Log("Player crash");
+            ConnectTo(collider); 
         }
         else if(collider.CompareTag(TagManager.GetTagNameByEnum(TagEnum.Obstacle)))
         {

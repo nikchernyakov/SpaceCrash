@@ -25,6 +25,7 @@ public class MapGenerator : MonoBehaviour {
         public float obstacleRowProbability;
         [Range(0, 1)]
         public float obstacleProbability;
+        public float columnDistance;
 
         public Vector2 obstacleSize;
         public Obstacle obstacle;
@@ -106,6 +107,7 @@ public class MapGenerator : MonoBehaviour {
             if (!CommonHandler.IsRandomSaysTrue(zoneProperties.obstacleRowProbability)) continue;
             else previousRowHasObstacle = true;
             
+            // Get random exit column index
             int randomEmptyColumnInd = Random.Range(0, zoneProperties.columnCount);
 
             for (int columnInd = 0; columnInd < zoneProperties.columnCount; columnInd++)
@@ -115,7 +117,10 @@ public class MapGenerator : MonoBehaviour {
                 {
                     Obstacle obstacle = Instantiate(zoneProperties.obstacle, zoneTransform);
                     obstacle.transform.position =
-                        new Vector2(zoneRightDownPoint.x + columnInd * zoneProperties.obstacleSize.x + zoneProperties.obstacleSize.x / 2,
+                        new Vector2(zoneRightDownPoint.x  // Start of zone
+                        + columnInd * (zoneProperties.obstacleSize.x // Go to the obstacle position in row
+                        + zoneProperties.columnDistance * (columnInd != 0 ? 1 : 0)) // Add column distance if not start of zone
+                        + zoneProperties.obstacleSize.x / 2, // Add obstacle center
                        zoneRightDownPoint.y + rowInd * zoneProperties.obstacleSize.y + zoneProperties.obstacleSize.y / 2);
                 }
             }
